@@ -22,16 +22,35 @@ app.add_middleware(
 scaler = None
 kmeans = None
 
+# main.py의 load_models 함수 수정
+@app.on_event("startup")
 def load_models():
-    global scaler, kmeans
+    global model, scaler
+    model_path = 'kmeans_model.pkl'
+    
+    # [디버깅] 파일이 존재하는지, 크기는 얼마인지 확인
+    if os.path.exists(model_path):
+        size = os.path.getsize(model_path)
+        print(f"📂 모델 파일 크기: {size} bytes")
+        
+        # 파일 앞부분 100바이트만 읽어서 로그에 출력 (텍스트인지 확인용)
+        with open(model_path, 'rb') as f:
+            header = f.read(100)
+            print(f"🔍 파일 헤더 확인: {header}")
+            
+        if size < 300:
+            print("⚠️ 경고: 파일 크기가 너무 작습니다. Git LFS 포인터 파일일 가능성이 높습니다.")
+    else:
+        print("❌ 모델 파일이 없습니다.")
+
     try:
-        with open('scaler.pkl', 'rb') as f:
-            scaler = pickle.load(f)
-        with open('kmeans.pkl', 'rb') as f:
-            kmeans = pickle.load(f)
-        print("Models loaded successfully")
+        model = joblib.load('kmeans_model.pkl')
+        scaler = joblib.load('scaler.pkl')
+        print("✅ 모델 및 스케일러 로드 완료")
     except Exception as e:
-        print(f"Error loading models: {e}")
+        print(f"❌ 모델 로드 실패: {e}")
+        # 여기서 에러가 나더라도 서버가 죽지 않게 pass 처리 (로그 확인을 위해)
+        pass
 
 @app.on_event("startup")
 async def startup_event():
