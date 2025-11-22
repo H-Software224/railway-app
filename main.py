@@ -6,6 +6,7 @@ import numpy as np
 from typing import List
 import random
 import os
+import joblib
 
 app = FastAPI()
 
