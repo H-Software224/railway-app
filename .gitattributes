@@ -1,1 +1,1 @@
-*.pkl binary
+*.pkl binary -text !filter !diff !merge
