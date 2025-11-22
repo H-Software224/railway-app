@@ -26,7 +26,7 @@ kmeans = None
 @app.on_event("startup")
 def load_models():
     global model, scaler
-    model_path = 'kmeans_model.pkl'
+    model_path = 'kmeans.pkl'
     
     # [디버깅] 파일이 존재하는지, 크기는 얼마인지 확인
     if os.path.exists(model_path):
@@ -44,7 +44,7 @@ def load_models():
         print("❌ 모델 파일이 없습니다.")
 
     try:
-        model = joblib.load('kmeans_model.pkl')
+        model = joblib.load('kmeans.pkl')
         scaler = joblib.load('scaler.pkl')
         print("✅ 모델 및 스케일러 로드 완료")
     except Exception as e:
